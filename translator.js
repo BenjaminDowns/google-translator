@@ -1,5 +1,4 @@
 'use strict'
-console.log('working!')
 var running = true
 
 //  config variables
@@ -15,7 +14,8 @@ const fs = require('fs')
 const textract = require('textract')
 const googleTranslate = require('google-translate')(config.apiKey)
 const concat = require('concat-files')
-const colors = require('colors/safe')
+const colors = require('colors')
+console.log('Running!'.red.underline)
 
 //  global variables 
 // if you get Google to raise your quota, you can change these; otherwise the API will probably return a 403
@@ -26,8 +26,28 @@ var limit = 0,
     translateInterval,
     writtenFiles = []
 
-// extract the file
-textract.fromFileWithPath(textToBeTranslated, handleText)
+function concatFilesAndEnd() {
+    // stops the translation, combines all partials to a single file, and ends the process
+    clearInterval(translateInterval);
+    running = false;
+    concat(writtenFiles, completedFileName, () => {
+        console.log(colors.green(`FINISHED! \n Your completed file is at ${completedFileName}`))
+        process.exit()
+    })
+}
+
+function writeFile(name, data) {
+    // writes the file to the system
+
+    fs.writeFile(name, data, function (err) {
+        if (err) {
+            console.log(err)
+        } else {
+            console.log(colors.blue(`Partial successfully written: ${name}`))
+            writtenFiles.push(name)
+        }
+    })
+}
 
 function handleText(error, text) {
     // kicks off the translation (every 101 seconds) if the textract was successful
@@ -54,21 +74,14 @@ function translate() {
     var end = start + 10000
     var nextFileName = `${partialsFileName}_part${part}`
 
-    // make sure that the end of the file hasn't been reached
-    if (start >= limit) {
-        // if the end of the file has been reached, combine all partials into a final file and stop the translation.
-        clearInterval(translateInterval);
-        running = false;
-        concat(writtenFiles, completedFileName, () => {
-            console.log(colors.green(`FINISHED! \n Your completed file is at ${completedFileName}`))
-            process.exit()
-        })
+    if (start >= limit) {        
+        concatFilesAndEnd()
     } else {
 
-        var nextTextToBeTranslated = extractedText.slice(start, end)
+        var nextExcerpt = extractedText.slice(start, end)
 
         // SEND IT OFF TO GOOGLE FOR TRANSLATING    
-        googleTranslate.translate(nextTextToBeTranslated, 'en', function (err, translation) {
+        googleTranslate.translate(nextExcerpt, 'en', (err, translation) => {         
             if (err) {
                 console.log(err)
                 clearInterval(translateInterval)
@@ -86,16 +99,5 @@ function translate() {
     }
 }
 
-
-function writeFile(name, data) {
-    // writes the file to the system
-
-    fs.writeFile(name, data, function (err) {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log(colors.blue(`Partial successfully written: ${name}`))
-            writtenFiles.push(name)
-        }
-    })
-}
+// process the file
+textract.fromFileWithPath(textToBeTranslated, handleText)
