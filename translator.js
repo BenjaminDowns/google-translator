@@ -35,7 +35,7 @@ function handleText(error, text) {
     if (error) {
         console.log(error)
         process.exit(2)
-        
+
     } else {
         extractedText = text
         limit = extractedText.length
@@ -56,26 +56,25 @@ function translate() {
 
     // make sure that the end of the file hasn't been reached
     if (start >= limit) {
-        // if the end of the file has been reached, concat to a final file and stop the translation.
-
+        // if the end of the file has been reached, combine all partials into a final file and stop the translation.
         clearInterval(translateInterval);
         running = false;
         concat(writtenFiles, completedFileName, () => {
             console.log(colors.green(`FINISHED! \n Your completed file is at ${completedFileName}`))
             process.exit()
         })
-    }
+    } else {
 
-    var nextTextToBeTranslated = extractedText.slice(start, end)
+        var nextTextToBeTranslated = extractedText.slice(start, end)
 
-    // SEND IT OFF TO GOOGLE FOR TRANSLATING    
-    if (running) {
+        // SEND IT OFF TO GOOGLE FOR TRANSLATING    
         googleTranslate.translate(nextTextToBeTranslated, 'en', function (err, translation) {
             if (err) {
                 console.log(err)
                 clearInterval(translateInterval)
-            } else {
+                process.exit(2)
 
+            } else {
                 // WRITE IT TO FILE
                 console.log(`Detected source language: ${translation.detectedSourceLanguage}`)
                 console.log(`Translating from character ${start} to ${end} \n Text remaining: ${limit - start}`)
@@ -83,6 +82,7 @@ function translate() {
 
             }
         }) // end of googleTranslate
+
     }
 }
 

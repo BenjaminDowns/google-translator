@@ -41,7 +41,7 @@ function writeFile() {
         if (err) {
             console.log(err)
         } else {
-            console.log('Done writing raw dictionary'.underline.green)
+            console.log('Done writing raw dictionary'.inverse.green)
         }
     })
     
@@ -60,7 +60,7 @@ function writeFile() {
         if (err) {
             console.log(err)
         } else {
-            console.log('Done writing filtered dictionary!'.bold.rainbow)
+            console.log('Done writing filtered dictionary!'.inverse.green)
         }
     })
 } // end of writeFile function
