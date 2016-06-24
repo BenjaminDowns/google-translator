@@ -15,7 +15,7 @@ const fs = require('fs')
 const textract = require('textract')
 const googleTranslate = require('google-translate')(config.apiKey)
 const concat = require('concat-files')
-const colors = require('colors')
+const colors = require('colors/safe')
 
 //  global variables 
 // if you get Google to raise your quota, you can change these; otherwise the API will probably return a 403
@@ -34,6 +34,8 @@ function handleText(error, text) {
 
     if (error) {
         console.log(error)
+        process.exit(2)
+        
     } else {
         extractedText = text
         limit = extractedText.length

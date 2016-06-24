@@ -1,7 +1,7 @@
 // require built-in modules
 const fs = require('fs')
 
-// what's a terminal message without lovely colors?
+// what's a terminal message without colors?
 const colors = require('colors')
 
 // load config settings
@@ -45,7 +45,7 @@ function writeFile() {
         }
     })
     
-    // make analyzed version of dictionary
+    // make analyzed version of dictionary (filtered out common words)
     var array = []
     for (a in sum) {
         if (sum[a] > 2 && stopWords.indexOf(a.toLowerCase()) < 0) {
@@ -60,7 +60,7 @@ function writeFile() {
         if (err) {
             console.log(err)
         } else {
-            console.log('Done writing filtered dictionary!'.underline.rainbow)
+            console.log('Done writing filtered dictionary!'.bold.rainbow)
         }
     })
 } // end of writeFile function
