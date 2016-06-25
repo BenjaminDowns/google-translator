@@ -74,7 +74,8 @@ function translate() {
     var end = start + 10000
     var nextFileName = `${partialsFileName}_part${part}`
 
-    if (start >= limit) {        
+    if (start >= limit) {
+                
         concatFilesAndEnd()
     } else {
 
