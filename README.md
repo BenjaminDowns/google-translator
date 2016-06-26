@@ -20,7 +20,9 @@ NOTE: You will need a [GoogleTranslate API key](https://cloud.google.com/transla
 
 ## Details:
 
-The config.json needs, at the very least, your googletranslate API key. You should also designate your `source` (the text to be translated). Because this translator breaks the file into parts in order to keep the translation under the maximum allowed, it will write partials in addition to a final, completed version of the translation. These are the `partialsDestination` (the path and file name to be written) and `completedDestination` (the path and file name of the completed and combined file).
+### See the sampleconfig.json to set up your config.json. The config.json needs, at the very least, your googletranslate API key. You should also designate your `source` (the text to be translated). This translator splits the file to keep each call to the GoogleTranslate API under the maximum number of characters allowed, so it will write partials in addition to a final, completed version of the translation. These are the `partialsDestination` (the path and file name to be written) and `completedDestination` (the path and file name of the completed and combined file).
+
+Each `partialsDestination` will have "part
 
 ### Using from the command line 
 
