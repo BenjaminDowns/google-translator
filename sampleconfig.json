@@ -1,0 +1,6 @@
+{
+    "apiKey": "put your API key here",
+    "source": "text/file/to/be/translated",
+    "partialsDestination": "destination/for/each/10000-character/translated/partial",
+    "completedDestination": "destination/for/the/translated/and/combined/file"
+}
