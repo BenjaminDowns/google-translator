@@ -5,7 +5,7 @@ var running = true
 const config = require('./config.json')
 const textToBeTranslated = config.source.length > 0 ? config.source : process.argv(2)
 const partialsFileName = config.partialsDestination.length > 0 ? config.partialsDestination : process.argv(3)
-const completedFileName = config.completedDestination.length > 0 ? config.completedFileName : process.argv(4)
+const completedFileName = config.completedDestination.length > 0 ? config.completedDestination : process.argv(4)
 
 //  built-in node module
 const fs = require('fs')
