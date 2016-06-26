@@ -1,13 +1,17 @@
 {
   "name": "auto-translate",
   "version": "1.0.0",
-  "description": "This Node.js program handles bulk translation projects via the Googletranslate API without having to pay for bulk translation. Step 1: get API key. Step 2: create config.json using the format shown in the repository. Step 3: run the program from the command line.",
-  "main": "index.js",
+  "description": "This Node.js program handles bulk translation projects via the Googletranslate API without having to pay for bulk translation.",
+  "main": "translator.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Benjamin M. Downs",
   "license": "ISC",
+  "repository" : { 
+    "type" : "git", 
+    "url" : "https://github.com/BenjaminDowns/google-translator"
+  },
   "dependencies": {
     "colors": "^1.1.2",
     "concat-files": "^0.1.0",
