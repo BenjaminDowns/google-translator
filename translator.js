@@ -15,6 +15,8 @@ const textract = require('textract')
 const googleTranslate = require('google-translate')(config.apiKey)
 const concat = require('concat-files')
 const colors = require('colors')
+
+
 console.log('Running!'.red.underline)
 
 //  global variables 
@@ -27,7 +29,8 @@ var limit = 0,
     writtenFiles = []
 
 function concatFilesAndEnd() {
-    // stops the translation, combines all partials to a single file, and ends the process
+    // combines all partials to a single file, and ends the translation process
+    
     clearInterval(translateInterval);
     running = false;
     concat(writtenFiles, completedFileName, () => {
@@ -37,7 +40,7 @@ function concatFilesAndEnd() {
 }
 
 function writeFile(name, data) {
-    // writes the file to the system
+    // writes the partial to the system and saves the name of the partial for combining later 
 
     fs.writeFile(name, data, function (err) {
         if (err) {
@@ -68,7 +71,7 @@ function handleText(error, text) {
 function translate() {
     // passes the text to the google translate API, 10k characters at a time
 
-    // increment to the next section of text and part of the translation
+    // increment to the next section of text and the next part of the translation
     part++
     start += 10000
     var end = start + 10000
@@ -77,6 +80,7 @@ function translate() {
     if (start >= limit) {
                 
         concatFilesAndEnd()
+        
     } else {
 
         var nextExcerpt = extractedText.slice(start, end)
@@ -85,13 +89,12 @@ function translate() {
         googleTranslate.translate(nextExcerpt, 'en', (err, translation) => {         
             if (err) {
                 console.log(err)
-                clearInterval(translateInterval)
                 process.exit(2)
 
             } else {
-                // WRITE IT TO FILE
+                // if successfully translated, write the partial to file
                 console.log(`Detected source language: ${translation.detectedSourceLanguage}`)
-                console.log(`Translating from character ${start} to ${end} \n Text remaining: ${limit - start}`)
+                console.log(`Translating from character ${start} to ${end} \nText remaining: ${limit - start}`)
                 writeFile(nextFileName, translation.translatedText);
 
             }
@@ -100,5 +103,5 @@ function translate() {
     }
 }
 
-// process the file
+// pulls the trigger
 textract.fromFileWithPath(textToBeTranslated, handleText)
