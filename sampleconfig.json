@@ -3,7 +3,7 @@
     "source": "path/to/text/file/to/be/translated (type: String)",
     "partialsDestination": "path/for/each/10000-character/translated/partial (type: String)",
     "completedDestination": "path/for/the/translated/and/combined/file (type: String)",
-    "charLimit": "maximum number of characters per request. 10000 is the API limit for free accounts; slower connections should use lower limits, e.g. 5000. (type: Number)",
+    "charLimit": "maximum number of characters per request. Defaults to the API limit for free accounts (10000); slow connections should use lower limits, e.g. 5000. (type: Number)",
     "verbose": "false suppresses verbose progress messages. Defaults to true (type: Boolean)",
     "analysis" : {
         "source": "path/to/text/to/be/analyzed This is probably the same as completedDestination (type: String)",
