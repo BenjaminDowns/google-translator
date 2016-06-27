@@ -1,8 +1,7 @@
 'use strict'
-var running = true
-
 //  config variables
 const config = require('./config.json')
+const apiKey = config.apiKey
 const textToBeTranslated = config.source.length > 0 ? config.source : process.argv(2)
 const partialsFileName = config.partialsDestination.length > 0 ? config.partialsDestination : process.argv(3)
 const completedFileName = config.completedDestination.length > 0 ? config.completedDestination : process.argv(4)
@@ -14,10 +13,9 @@ const fs = require('fs')
 
 //  third-party npm modules 
 const textract = require('textract')
-const googleTranslate = require('google-translate')(config.apiKey)
+const googleTranslate = require('google-translate')(apiKey)
 const concat = require('concat-files')
 const colors = require('colors')
-
 
 console.log('Running!'.red.underline)
 
@@ -28,7 +26,8 @@ var limit = 0,
     start = -charLimit,
     extractedText,
     translateInterval,
-    writtenFiles = []
+    writtenFiles = [],
+    running = true
 
 function concatFilesAndEnd() {
     // combines all partials to a single file, and ends the translation process
@@ -74,8 +73,8 @@ function handleText(error, text) {
 function logVerboseProgress(language, charsRemaining, secsRemaining, finishTime) {
     console.log(`Detected source language: ${language}`)
     console.log(`Text remaining: ${charsRemaining}`)
-    console.log(`Time remaining: ${Math.floor(secsRemaining / 60)}: ${secsRemaining % 60}`.inverse.green)
-    console.log(`Finished at approximately: ${finishTime}`.inverse.green)
+    console.log(`Estimated time remaining: ${Math.floor(secsRemaining / 60)}: ${secsRemaining % 60}`.inverse.green)
+    console.log(`Estimated finish time: ${finishTime}`.inverse.green)
 }
 
 function translate() {
@@ -92,31 +91,29 @@ function translate() {
         concatFilesAndEnd()
 
     } else {
-
+        // SEND IT OFF TO GOOGLE FOR TRANSLATING
+        
         var nextExcerpt = extractedText.slice(start, end)
-
-        // SEND IT OFF TO GOOGLE FOR TRANSLATING    
         googleTranslate.translate(nextExcerpt, 'en', (err, translation) => {
             if (err) {
                 console.log(err)
                 process.exit(2)
-
-            } else {
                 
-                // if successfully translated, log some progress messages and write the partial to file
+            } else {           
+                // log some progress messages and write the translated partial to file
                 
                 let charsRemaining = limit - start
                 let secsRemaining = (Math.ceil(charsRemaining / charLimit)) * 101
                 let finishTime = new Date(Date.now() + (secsRemaining * 1000)).toTimeString()
-
+                
                 if (verbose) {
                     logVerboseProgress(translation.detectedSourceLanguage, charsRemaining, secsRemaining, finishTime)
                 }
-
+                
                 writeFile(nextFileName, translation.translatedText);
 
             }
-        }) // end of googleTranslate
+        }) // end of googleTranslate callback
     }
 }
 
