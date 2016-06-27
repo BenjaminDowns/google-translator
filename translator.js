@@ -6,6 +6,7 @@ const config = require('./config.json')
 const textToBeTranslated = config.source.length > 0 ? config.source : process.argv(2)
 const partialsFileName = config.partialsDestination.length > 0 ? config.partialsDestination : process.argv(3)
 const completedFileName = config.completedDestination.length > 0 ? config.completedDestination : process.argv(4)
+const charLimit = config.charLimit || 10000
 
 //  built-in node module
 const fs = require('fs')
@@ -23,7 +24,7 @@ console.log('Running!'.red.underline)
 // if you get Google to raise your quota, you can change these; otherwise the API will probably return a 403
 var limit = 0,
     part = 0,
-    start = -10000,
+    start = -charLimit,
     extractedText,
     translateInterval,
     writtenFiles = []
@@ -46,7 +47,7 @@ function writeFile(name, data) {
         if (err) {
             console.log(err)
         } else {
-            console.log(colors.blue(`Partial successfully written: ${name}`))
+            console.log(`Partial successfully written: ${name}`.underline.blue)
             writtenFiles.push(name)
         }
     })
@@ -74,8 +75,8 @@ function translate() {
 
     // increment to the next section of text and the next part of the translation
     part++
-    start += 10000
-    var end = start + 10000
+    start += charLimit
+    var end = start + charLimit
     var nextFileName = `${partialsFileName}_part${part}`
 
     if (start >= limit) {
@@ -93,9 +94,14 @@ function translate() {
                 process.exit(2)
 
             } else {
-                // if successfully translated, write the partial to file
+                let charsRemaining = limit - start
+                let secsRemaining = (Math.ceil(charsRemaining/charLimit)) * 101
+                
+                // if successfully translated, write some handy messages, and write the partial to file
                 console.log(`Detected source language: ${translation.detectedSourceLanguage}`)
-                console.log(`Translating from character ${start} to ${end} \nText remaining: ${limit - start}`)
+                console.log(`Translating from character ${start} to ${end} \nText remaining: ${charsRemaining}`)
+                console.log(`Time remaining: ${Math.floor(secsRemaining / 60)}: ${secsRemaining % 60}`.inverse.green)
+                
                 writeFile(nextFileName, translation.translatedText);
 
             }
