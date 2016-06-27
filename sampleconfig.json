@@ -1,12 +1,12 @@
 {
-    "apiKey": "type: String – put your Google Translate API key here",
-    "source": "type: String – text/file/to/be/translated",
-    "partialsDestination": "type: String – destination/for/each/10000-character/translated/partial",
-    "completedDestination": "type: String – destination/for/the/translated/and/combined/file",
-    "charLimit": "type: Number – maximum number of characters per request (10000 is API limit; slower connections should use lower limits, e.g. 5000)",
-    "verbose": "type: Boolean – false suppresses verbose progress messages. Defaults to true",
+    "apiKey": "put your Google Translate API key here (type: String)",
+    "source": "path/to/text/file/to/be/translated (type: String)",
+    "partialsDestination": "path/for/each/10000-character/translated/partial (type: String)",
+    "completedDestination": "path/for/the/translated/and/combined/file (type: String)",
+    "charLimit": "maximum number of characters per request. 10000 is the API limit for free accounts; slower connections should use lower limits, e.g. 5000. (type: Number)",
+    "verbose": "false suppresses verbose progress messages. Defaults to true (type: Boolean)",
     "analysis" : {
-        "source": "type: String – text/to/be/analyzed(probably the same as completedDestination )",
-        "destination": "type: String – destination/for/the/analysis"
+        "source": "path/to/text/to/be/analyzed This is probably the same as completedDestination (type: String)",
+        "destination": "path/for/the/completed/analysis (type: String)"
     }
 }
