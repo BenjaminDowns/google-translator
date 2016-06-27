@@ -4,10 +4,10 @@ const fs = require('fs')
 // what's a terminal message without colors?
 const colors = require('colors')
 
-// load config settings
+// load config settings or get from command line args
 const config = require('./config.json')
-const destinationDir = config.analysis.destination
-const source = config.analysis.source
+const source = config.analysis.source.length > 0 ? config.analysis.source : process.argv(2)
+const destinationDir = config.analysis.destination.length > 0 ? config.analysis.destination : process.argv(3)
 
 // load list of stopwords to filter out of text
 const stopWords = fs.readFileSync('stopwords.txt', 'utf8').split('\n')
@@ -19,6 +19,7 @@ var sum,
 // get text
 var text = fs.readFileSync(source, 'utf8')
 var splitText = text.split(' ')
+
 console.log(`Running`.underline.red)
 console.log(`Source text length: ${splitText.length}`.underline.green)
 
@@ -29,7 +30,7 @@ function reduceAndWrite(callback) {
         return a
     }, dictionary)
     
-    // wait 5 seconds to make sure the function finishes before calling the callback
+    // wait 5 seconds to make sure the function finishes before calling the callback; there must be a better way to do this, but this works for now.
     setTimeout(callback, 5 * 1000)
     
 }

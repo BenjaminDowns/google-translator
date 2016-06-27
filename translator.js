@@ -62,6 +62,7 @@ function handleText(error, text) {
     } else {
         extractedText = text
         limit = extractedText.length
+
         // call translate right away, then once every 101 seconds
         translate()
         translateInterval = setInterval(translate, 1000 * 101)
@@ -78,7 +79,7 @@ function translate() {
     var nextFileName = `${partialsFileName}_part${part}`
 
     if (start >= limit) {
-                
+        console.log(`Finished translation; now combining partials`.green.underline)
         concatFilesAndEnd()
         
     } else {
