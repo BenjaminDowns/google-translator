@@ -96,11 +96,13 @@ function translate() {
             } else {
                 let charsRemaining = limit - start
                 let secsRemaining = (Math.ceil(charsRemaining/charLimit)) * 101
+                let finishTime = new Date(Date.now() + (secsRemaining * 1000)).toTimeString()
                 
                 // if successfully translated, write some handy messages, and write the partial to file
                 console.log(`Detected source language: ${translation.detectedSourceLanguage}`)
-                console.log(`Translating from character ${start} to ${end} \nText remaining: ${charsRemaining}`)
+                console.log(`Text remaining: ${charsRemaining}`)
                 console.log(`Time remaining: ${Math.floor(secsRemaining / 60)}: ${secsRemaining % 60}`.inverse.green)
+                console.log(`Finished at approximately: ${finishTime}`.inverse.green)
                 
                 writeFile(nextFileName, translation.translatedText);
 
