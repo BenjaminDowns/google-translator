@@ -44,7 +44,7 @@ function concatFilesAndEnd() {
 function writeFile(name, data) {
     // writes the partial to the system and saves the name of the partial for combining later 
 
-    fs.writeFile(name, data, function (err) {
+    fs.writeFile(name, data, (err) => {
         if (err) {
             console.log(err)
         } else {
