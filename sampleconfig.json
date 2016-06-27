@@ -4,6 +4,7 @@
     "partialsDestination": "destination/for/each/10000-character/translated/partial",
     "completedDestination": "destination/for/the/translated/and/combined/file",
     "charLimit": "maximum-number-of-characters-per-request (10000 is API limit; slower connections should use lower limits, e.g. 5000)",
+    "verbose": true,
     "analysis" : {
         "source": "text/to/be/analyzed(probably the same as completedDestination )",
         "destination": "destination/for/the/analysis"
