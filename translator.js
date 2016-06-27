@@ -7,6 +7,7 @@ const textToBeTranslated = config.source.length > 0 ? config.source : process.ar
 const partialsFileName = config.partialsDestination.length > 0 ? config.partialsDestination : process.argv(3)
 const completedFileName = config.completedDestination.length > 0 ? config.completedDestination : process.argv(4)
 const charLimit = config.charLimit || 10000
+const verbose = config.verbose || true
 
 //  built-in node module
 const fs = require('fs')
@@ -31,7 +32,7 @@ var limit = 0,
 
 function concatFilesAndEnd() {
     // combines all partials to a single file, and ends the translation process
-    
+
     clearInterval(translateInterval);
     running = false;
     concat(writtenFiles, completedFileName, () => {
@@ -70,6 +71,13 @@ function handleText(error, text) {
     }
 }
 
+function logVerboseProgress(language, charsRemaining, secsRemaining, finishTime) {
+    console.log(`Detected source language: ${language}`)
+    console.log(`Text remaining: ${charsRemaining}`)
+    console.log(`Time remaining: ${Math.floor(secsRemaining / 60)}: ${secsRemaining % 60}`.inverse.green)
+    console.log(`Finished at approximately: ${finishTime}`.inverse.green)
+}
+
 function translate() {
     // passes the text to the google translate API, 10k characters at a time
 
@@ -82,33 +90,33 @@ function translate() {
     if (start >= limit) {
         console.log(`Finished translation; now combining partials`.green.underline)
         concatFilesAndEnd()
-        
+
     } else {
 
         var nextExcerpt = extractedText.slice(start, end)
 
         // SEND IT OFF TO GOOGLE FOR TRANSLATING    
-        googleTranslate.translate(nextExcerpt, 'en', (err, translation) => {         
+        googleTranslate.translate(nextExcerpt, 'en', (err, translation) => {
             if (err) {
                 console.log(err)
                 process.exit(2)
 
             } else {
+                
+                // if successfully translated, log some progress messages and write the partial to file
+                
                 let charsRemaining = limit - start
-                let secsRemaining = (Math.ceil(charsRemaining/charLimit)) * 101
+                let secsRemaining = (Math.ceil(charsRemaining / charLimit)) * 101
                 let finishTime = new Date(Date.now() + (secsRemaining * 1000)).toTimeString()
-                
-                // if successfully translated, write some handy messages, and write the partial to file
-                console.log(`Detected source language: ${translation.detectedSourceLanguage}`)
-                console.log(`Text remaining: ${charsRemaining}`)
-                console.log(`Time remaining: ${Math.floor(secsRemaining / 60)}: ${secsRemaining % 60}`.inverse.green)
-                console.log(`Finished at approximately: ${finishTime}`.inverse.green)
-                
+
+                if (verbose) {
+                    logVerboseProgress(translation.detectedSourceLanguage, charsRemaining, secsRemaining, finishTime)
+                }
+
                 writeFile(nextFileName, translation.translatedText);
 
             }
         }) // end of googleTranslate
-
     }
 }
 
