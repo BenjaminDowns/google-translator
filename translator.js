@@ -31,11 +31,12 @@ var limit = 0,
 
 function concatFilesAndEnd() {
     // combines all partials to a single file, and ends the translation process
-
+    console.log(`Finished translation; now combining partials`.green.underline)
+    
     clearInterval(translateInterval);
     running = false;
     concat(writtenFiles, completedFileName, () => {
-        console.log(colors.green(`FINISHED! \n Your completed file is at ${completedFileName}`))
+        console.log(`FINISHED! \n Your completed file is at ${completedFileName}`.inverse.green)
         process.exit()
     })
 }
@@ -71,10 +72,13 @@ function handleText(error, text) {
 }
 
 function logVerboseProgress(language, charsRemaining, secsRemaining, finishTime) {
+    // This logs the details of the translation progress.
+    // Unless supressed in config file, this function is called for each translated excerpt.
+    
     console.log(`Detected source language: ${language}`)
     console.log(`Text remaining: ${charsRemaining}`)
-    console.log(`Estimated time remaining: ${Math.floor(secsRemaining / 60)}: ${secsRemaining % 60}`.inverse.green)
-    console.log(`Estimated finish time: ${finishTime}`.inverse.green)
+    console.log(`Estimated time remaining: ${Math.floor(secsRemaining / 60)}: ${secsRemaining % 60}`.underline.green)
+    console.log(`Estimated finish time: ${finishTime}`.underline.green)
 }
 
 function translate() {
@@ -87,7 +91,7 @@ function translate() {
     var nextFileName = `${partialsFileName}_part${part}`
 
     if (start >= limit) {
-        console.log(`Finished translation; now combining partials`.green.underline)
+        
         concatFilesAndEnd()
 
     } else {
@@ -102,12 +106,13 @@ function translate() {
             } else {           
                 // log some progress messages and write the translated partial to file
                 
+                let language = translation.detectedSourceLanguage
                 let charsRemaining = limit - start
                 let secsRemaining = (Math.ceil(charsRemaining / charLimit)) * 101
                 let finishTime = new Date(Date.now() + (secsRemaining * 1000)).toTimeString()
                 
                 if (verbose) {
-                    logVerboseProgress(translation.detectedSourceLanguage, charsRemaining, secsRemaining, finishTime)
+                    logVerboseProgress(language, charsRemaining, secsRemaining, finishTime)
                 }
                 
                 writeFile(nextFileName, translation.translatedText);
