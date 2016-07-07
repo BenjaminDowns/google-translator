@@ -1,7 +1,7 @@
-# google-translator 
+# google-translator and text analyzer
 ####(or "Super-Dissertation 3000")
 
-A node.js translator to bulk translate using the google translate API without exceeding free API limits.
+A translator and text analyzer to 1) bulk translate using the google translate API without exceeding free API limits and 2) analyze the results
 
 ## How to use
 
@@ -11,12 +11,16 @@ A node.js translator to bulk translate using the google translate API without ex
 ### Step 1: Install dependencies
 `npm install`
 
-### Step 2: Create config.json (see 'sampleconfig.json' in the repository for an example)
-NOTE: You will need a [GoogleTranslate API key](https://cloud.google.com/translate/docs/)
-(see "Details" below)
+### Step 2: Create `config.json` that includes: 
+1) path to texts to be translated and/or analyzed 
+2) path to directory where file will be written
+3) Google Translate API Key (https://cloud.google.com/translate/docs/)
+
+(see `sampleconfig.json` in the repository for an example and "Details" section below)
 
 ### Step 3: run it
-`node translator.js`
+Translator: `node translator.js`
+Analyzer: `cd analysis`; `node analysis.js`
 
 ## Details:
 
@@ -26,6 +30,10 @@ Each `partialsDestination` will have `partx` appended to it (e.g. `translated_fi
 
 ### Using from the command line 
 
-You may also designate `source`, `partialsDestination` and `completedDestination` from the commandline as follows:
+You may also designate config variables from the commandline as follows:
 
+#### for the translator:
 `node translator.js <source> <partialsDestination> <completedDestination>`
+
+#### for the analysis:
+`node analysis.js <source> <destination>`

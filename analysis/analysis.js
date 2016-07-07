@@ -25,6 +25,8 @@ console.log(`Running`.underline.red)
 console.log(`Analyzing ${splitText.length} words`.underline.green)
 
 function makeRawDictionary() {
+    // counts up the number of occurrences of each word
+
     rawDictionary = splitText.reduce((dict, word) => {
         word = word.toLowerCase().replace(/[^\w]/g, '')
         dict[word] ? dict[word] += 1 : dict[word] = 1
@@ -34,7 +36,11 @@ function makeRawDictionary() {
 }
 
 function makeFilteredDictionary(rawDictionary) {
+    // analyzes the raw dictionary by filtering out common words, 
+    // then summing the occurrences of each word
+
     let filteredDictionary = []
+    // filter out common words
     for (let word in rawDictionary) {
         if (rawDictionary[word] > 2 && stopWords.indexOf(word.toLowerCase()) < 0) {
             filteredDictionary.push([word, rawDictionary[word]])
@@ -49,6 +55,7 @@ function makeFilteredDictionary(rawDictionary) {
 
 
 function writeFile() {
+    // writes both the dictionary versions to file – first the raw version, then the analyzed version
 
     // write raw version of dictionary to file
     fs.writeFile(`${destinationDir}rawDictionary.txt`, JSON.stringify(makeRawDictionary(), null, 2), 'utf-8', (err) => {
