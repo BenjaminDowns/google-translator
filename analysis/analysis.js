@@ -47,17 +47,6 @@ function makeFilteredDictionary(rawDictionary) {
     return filteredDictionary
 }
 
-// function reduceAndWrite(callback) {
-//     rawDictionary = splitText.reduce((dict, word) => {
-//         word = word.toLowerCase().replace(/[^\w]/g, '')
-//         dict[word] ? dict[word] += 1 : dict[word] = 1
-//         return dict
-//     }, emptyDict)
-
-//     // use setTimeout to push the callback on the queue; thanks to async, this will wait for the stack to clear (i.e. the .reduce() to finish) before executing the callback
-//     setTimeout(callback, 0)
-
-// }
 
 function writeFile() {
 
@@ -69,18 +58,6 @@ function writeFile() {
             console.log('Done writing raw dictionary'.inverse.green)
         }
     })
-
-    // // make analyzed version of dictionary: filtered out common words and alpha ordering
-    // let filteredDictionary = []
-    // for (let word in rawDictionary) {
-    //     if (rawDictionary[word] > 2 && stopWords.indexOf(word.toLowerCase()) < 0) {
-    //         filteredDictionary.push([word, rawDictionary[word]])
-    //     }
-    // }
-    // // sort by number of occurrences of each word
-    // filteredDictionary.sort(function (a, b) { return b[1] - a[1] });
-    // // format to read as "[word]: [number of occurrences of word]"
-    // filteredDictionary = filteredDictionary.map(x => x = `${x[0]} : ${x[1].toString()}`)
 
     // write analyzed version of dictionary to file
     fs.writeFile(`${destinationDir}filteredDictionary.txt`, JSON.stringify(makeFilteredDictionary(rawDictionary), null, 2), 'utf-8', (err) => {
