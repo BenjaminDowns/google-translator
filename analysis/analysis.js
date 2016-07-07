@@ -1,3 +1,4 @@
+'use strict'
 // require built-in module
 const fs = require('fs')
 
@@ -5,7 +6,7 @@ const fs = require('fs')
 const colors = require('colors')
 
 // load config settings or get from command line args
-const config = require('./config.json')
+const config = require('../config.json')
 const source = config.analysis.source.length > 0 ? config.analysis.source : process.argv(2)
 const destinationDir = config.analysis.destination.length > 0 ? config.analysis.destination : process.argv(3)
 
@@ -13,25 +14,25 @@ const destinationDir = config.analysis.destination.length > 0 ? config.analysis.
 const stopWords = fs.readFileSync('stopwords.txt', 'utf8').split('\n')
 
 // initialize global variables
-var rawDictionary, 
+let rawDictionary, 
     emptyDict = {}
 
 // get text
-var text = fs.readFileSync(source, 'utf8')
-var splitText = text.split(' ')
+const text = fs.readFileSync(source, 'utf8')
+let splitText = text.split(' ')
 
 console.log(`Running`.underline.red)
-console.log(`Source text length: ${splitText.length}`.underline.green)
+console.log(`Analyzing ${splitText.length} words`.underline.green)
 
 function reduceAndWrite(callback) {
-    rawDictionary = splitText.reduce((a, b) => {
-        b = b.toLowerCase().replace(/[^\w]/g, '')
-        a[b] ? a[b] += 1 : a[b] = 1
-        return a
+    rawDictionary = splitText.reduce((dict, word) => {
+        word = word.toLowerCase().replace(/[^\w]/g, '')
+        dict[word] ? dict[word] += 1 : dict[word] = 1
+        return dict
     }, emptyDict)
     
-    // wait 5 seconds to make sure the function finishes before calling the callback; there must be a better way to do this, but this works for now.
-    setTimeout(callback, 5 * 1000)
+    // use setTimeout to push the callback on the queue; thanks to async, this will wait for the stack to clear (i.e. the .reduce() to finish) before executing the callback
+    setTimeout(callback, 0)
     
 }
 
@@ -46,18 +47,20 @@ function writeFile() {
         }
     })
     
-    // make analyzed version of dictionary (filtered out common words)
-    var array = []
-    for (a in rawDictionary) {
-        if (rawDictionary[a] > 2 && stopWords.indexOf(a.toLowerCase()) < 0) {
-            array.push([a, rawDictionary[a]])
+    // make analyzed version of dictionary: filtered out common words and alpha ordering
+    var filteredDictionary = []
+    for (let word in rawDictionary) {
+        if (rawDictionary[word] > 2 && stopWords.indexOf(word.toLowerCase()) < 0) {
+            filteredDictionary.push([word, rawDictionary[word]])
         }
     }
-    array.sort(function (a, b) { return a[1] - b[1] });
-    array = array.reverse().map(x => x = `${x[0]} : ${x[1].toString()}`)
+    // alphabetize
+    filteredDictionary.sort(function (a, b) { return b[1] - a[1] });
+    // format to read as "[word]: [number of occurrences of word]"
+    filteredDictionary = filteredDictionary.map(x => x = `${x[0]} : ${x[1].toString()}`)
     
     // write analyzed version of dictionary to file
-    fs.writeFile(`${destinationDir}filteredDictionary.txt`, JSON.stringify(array, null, 2), 'utf-8', (err) => {
+    fs.writeFile(`${destinationDir}filteredDictionary.txt`, JSON.stringify(filteredDictionary, null, 2), 'utf-8', (err) => {
         if (err) {
             console.log(err)
         } else {
