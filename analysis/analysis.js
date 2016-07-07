@@ -1,4 +1,4 @@
-// require built-in modules
+// require built-in module
 const fs = require('fs')
 
 // what's a terminal message without colors?
@@ -13,8 +13,8 @@ const destinationDir = config.analysis.destination.length > 0 ? config.analysis.
 const stopWords = fs.readFileSync('stopwords.txt', 'utf8').split('\n')
 
 // initialize global variables
-var sum, 
-    dictionary = {}
+var rawDictionary, 
+    emptyDict = {}
 
 // get text
 var text = fs.readFileSync(source, 'utf8')
@@ -24,11 +24,11 @@ console.log(`Running`.underline.red)
 console.log(`Source text length: ${splitText.length}`.underline.green)
 
 function reduceAndWrite(callback) {
-    sum = splitText.reduce((a, b) => {
+    rawDictionary = splitText.reduce((a, b) => {
         b = b.toLowerCase().replace(/[^\w]/g, '')
         a[b] ? a[b] += 1 : a[b] = 1
         return a
-    }, dictionary)
+    }, emptyDict)
     
     // wait 5 seconds to make sure the function finishes before calling the callback; there must be a better way to do this, but this works for now.
     setTimeout(callback, 5 * 1000)
@@ -38,7 +38,7 @@ function reduceAndWrite(callback) {
 function writeFile() {
     
     // write raw version of dictionary to file
-    fs.writeFile(`${destinationDir}rawDictionary.txt`, JSON.stringify(sum, null, 2), 'utf-8', (err) => {
+    fs.writeFile(`${destinationDir}rawDictionary.txt`, JSON.stringify(rawDictionary, null, 2), 'utf-8', (err) => {
         if (err) {
             console.log(err)
         } else {
@@ -48,9 +48,9 @@ function writeFile() {
     
     // make analyzed version of dictionary (filtered out common words)
     var array = []
-    for (a in sum) {
-        if (sum[a] > 2 && stopWords.indexOf(a.toLowerCase()) < 0) {
-            array.push([a, sum[a]])
+    for (a in rawDictionary) {
+        if (rawDictionary[a] > 2 && stopWords.indexOf(a.toLowerCase()) < 0) {
+            array.push([a, rawDictionary[a]])
         }
     }
     array.sort(function (a, b) { return a[1] - b[1] });
