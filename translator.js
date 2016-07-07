@@ -104,7 +104,7 @@ function translate() {
                 process.exit(2)
                 
             } else {           
-                // log some progress messages and write the translated partial to file
+                // log progress messages and write the translated partial to file
                 
                 let language = translation.detectedSourceLanguage
                 let charsRemaining = limit - start
