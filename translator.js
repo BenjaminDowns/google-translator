@@ -73,7 +73,7 @@ function handleText(error, text) {
 
 function logVerboseProgress(language, charsRemaining, secsRemaining, finishTime) {
     // This logs the details of the translation progress.
-    // Unless supressed in config file, this function is called for each translated excerpt.
+    // Unless suppressed in config file, this function is called for each translated excerpt.
     
     console.log(`Detected source language: ${language}`)
     console.log(`Text remaining: ${charsRemaining}`)
